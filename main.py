@@ -3,17 +3,7 @@ import pygame
 import time
 from math import floor
 import os
-from database_builder import download_youtube_audio
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
-import pandas
-from dotenv import load_dotenv
-
-load_dotenv()
-client_id = os.getenv('CLIENT_ID')
-client_secret = os.getenv('CLIENT_SECRET')
-sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id, client_secret))
-
+from database_builder import download_youtube_audio, retrieve_spotify_data
 
 
 def play_song(song):
@@ -24,17 +14,6 @@ def play_song(song):
     pygame.mixer.music.play(start=start_time)
     time.sleep(7)
     pygame.mixer.music.stop()
-
-def retrieve_spotify_data(genre, start_year):
-    query = f"genre:{genre} year:{start_year}-{min(start_year + 9, 2025)}"
-    results = sp.search(q=query, type="track", limit=50, market="US")
-    
-    
-    sorted_results = sorted(results['tracks']['items'], key=lambda d: d['popularity'], reverse=True)
-
-    # for i, track in enumerate(results['tracks']['items']):
-    #     print(f'Unsorted: {track['name']} {track['popularity']}')
-    #     print(f'Sorted: {sorted_results[i]['name']} {sorted_results[i]['popularity']}')
 
 
 def main():
