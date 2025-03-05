@@ -4,6 +4,7 @@ import pandas
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from dotenv import load_dotenv
+import sys
 
 load_dotenv()
 client_id = os.getenv('CLIENT_ID')
@@ -51,13 +52,10 @@ def retrieve_spotify_data(genre, start_year, limit=30):
     try:
         results = sp.search(q=query, type="track", limit=limit, market="US")
     except Exception as e:
-        print(f'An error occured: {e}')
+        sys.exit(f'An error occured: {e}')
     clean_results = results['tracks']['items']
     update_database(clean_results, genre, start_year)
-    # sorted_results = sorted(results['tracks']['items'], key=lambda d: d['popularity'], reverse=True)
-    # for i, track in enumerate(results['tracks']['items']):
-    #     print(f'Unsorted: {track['name']} {track['popularity']}')
-    #     print(f'Sorted: {sorted_results[i]['name']} {sorted_results[i]['popularity']}')
+
 
 def update_database(results, genre, year):
     filtered_database = []
@@ -73,6 +71,7 @@ def update_database(results, genre, year):
         'album': [],
         'genre': [],
         'popularity': [],
+        'year': [],
         }
      
     for track in results:
@@ -86,12 +85,14 @@ def update_database(results, genre, year):
             clean_album_title = track['album']['name'][0:album_index]
         else:
             clean_album_title = track['album']['name']
-        if track['name'] not in filtered_database:
+        if clean_track_title not in filtered_database:
+            print(f'{clean_track_title} not in {filtered_database}')
             songs['title'].append(clean_track_title)
             songs['artist'].append(track['artists'][0]["name"])
             songs['album'].append(clean_album_title)
             songs['genre'].append(genre)
             songs['popularity'].append(track['popularity'])
+            songs['year'].append(year)
 
     songs_df = pandas.DataFrame(songs)
     try:
