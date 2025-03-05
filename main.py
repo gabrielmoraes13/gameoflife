@@ -24,7 +24,9 @@ def main():
     if genre not in genre_options:
         print("Sorry, that's an invalid input")
     else:
-        decade = int(input(f'Now please select the decade from the following options: {", ".join(str(decade) for decade in decade_options)}.\nChoice: '))
+        decade = int(input(f"Now please select the decade from the following options: {", ".join(str(decade) for decade in decade_options)}."
+                           f"\nAfter this input the program will download the mp3 files needed for you to play the game, please give it a few minutes.\n"
+                           f"Choice: "))
         if decade not in decade_options:
             print("Sorry, that's an invalid input")
         else:
