@@ -34,9 +34,3 @@ def main():
 main()
 
 
-
-# directory = os.fsencode('songs')
-# for file in os.listdir(directory):
-#     filename = os.fsdecode(file)
-#     play_song(filename)
-
