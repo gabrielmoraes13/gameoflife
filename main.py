@@ -2,9 +2,9 @@ import random
 import pygame
 import time
 from math import floor
-import os
 from database_builder import download_youtube_audio, retrieve_spotify_data
 import pandas
+import sys
 
 
 def play_song(song):
@@ -33,7 +33,7 @@ def get_decade():
                        f"|After this input the program will download the mp3 files needed for you to play the game, please give it a few minutes.     |\n"
                        f"|If the songs have been downloaded previously already, the program will skip to the playing part.                            |\n"
                        f"¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\n"
-                       f"Choice: ")).strip()
+                       f"Choice: "))
     if decade not in decade_options:
         print("Sorry, that's an invalid input")
         get_decade()
@@ -47,45 +47,49 @@ def start_game(genre, year, difficulty):
     songs_to_play = filtered_df['title'].values.tolist()
     random.shuffle(songs_to_play)
     score = 0
+    exit = False
     for i, song in enumerate(songs_to_play):
-        print(f'Now playing song {i}/{len(songs_to_play)}.')
+        print(f'Now playing song {i}/{len(songs_to_play)}.\n')
         play_song(song)
         if difficulty == 'Easy':
-            print(song[0:5])
-        title = input("\nWhat song is it? 🎶 (Type 'r' if you want to listen to the song again.)\n").lower()
+            print(song[0:4])
+        title = input("What song is it? 🎶 (Type 'r' if you want to listen to the song again.)\n").lower()
         if title == 'r':
             play_song(song)
-            title = input("\nWhat song is it? 🎶\n").lower()
+            title = input("What song is it? 🎶\n").lower()
         if title == song.lower():
             score += 1
-            print('Nice one!')
+            print('Nice one!\n')
         else:
-            print('Sorry, you got that wrong.')
+            print('Sorry, you got that wrong.\n')
         
         if difficulty == 'Easy':
-            print(df[df['title'] == song]['artist'].values[0][0:5])
-        artist = input("\nWhat's the artist? 🧑‍🎤\n").lower()
+            print(df[df['title'] == song]['artist'].values[0][0:4])
+        artist = input("What's the artist? 🧑‍🎤\n").lower()
         if artist == df[df['title'] == song]['artist'].values[0].lower():
             score += 1
-            print('Nice one!')
+            print('Nice one!\n')
         else:
-            print('Sorry, you got that wrong.')
+            print('Sorry, you got that wrong.\n')
 
         if difficulty == 'Easy':
-            print(df[df['title'] == song]['album'].values[0][0:5])
-        album = input("\nAnd what's the album? 🎼 (You can type '(exit)' at the end to computate this answer and stop the game) \n").lower()
+            print(df[df['title'] == song]['album'].values[0][0:4])
+        album = input("And what's the album? 🎼 (You can type '(exit)' at the end to computate this answer and stop the game)\n").lower()
         if '(exit)' in album:
             album = album[0:album.find(' (exit)')]
             exit = True
         if album == df[df['title'] == song]['album'].values[0].lower():
             score += 1
-            print('Nice one!')
+            print('Nice one!\n')
         else:
-            print('Sorry, you got that wrong.')
+            print('Sorry, you got that wrong.\n')
         if exit:
-            sys.exit(f'\nThank you for playing the game. Your final score was {score}')
+            sys.exit(f'\nThank you for playing the game. Your final score is {score}.')
         
-        print(f'Total score so far: {score}\n')
+        print('________________________')
+        print(f'|Total score so far: {score}.|')
+        print('‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n')
+        time.sleep(1.5)
 
 def get_difficulty():
     difficulty_options = ['Easy', 'Normal', "Hard"]
