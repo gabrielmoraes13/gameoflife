@@ -6,10 +6,14 @@ import os
 from database_builder import download_youtube_audio
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
+import pandas
+from dotenv import load_dotenv
 
-client_id = '300f0b2f4048447c972f2a730fe455dc'
-client_secret = '55f5c8fa86af46378dbb4591bbb250fd'
+load_dotenv()
+client_id = os.getenv('CLIENT_ID')
+client_secret = os.getenv('CLIENT_SECRET')
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id, client_secret))
+
 
 
 def play_song(song):
@@ -22,17 +26,34 @@ def play_song(song):
     pygame.mixer.music.stop()
 
 def retrieve_spotify_data(genre, start_year):
-    query = f"genre:{genre} year:{start_year}-{start_year + 9}"
+    query = f"genre:{genre} year:{start_year}-{min(start_year + 9, 2025)}"
     results = sp.search(q=query, type="track", limit=50, market="US")
     
     
     sorted_results = sorted(results['tracks']['items'], key=lambda d: d['popularity'], reverse=True)
-    for i, track in enumerate(results['tracks']['items']):
-        print(f'Unsorted: {track['name']} {track['popularity']}')
-        print(f'Sorted: {sorted_results[i]['name']} {sorted_results[i]['popularity']}')
+
+    # for i, track in enumerate(results['tracks']['items']):
+    #     print(f'Unsorted: {track['name']} {track['popularity']}')
+    #     print(f'Sorted: {sorted_results[i]['name']} {sorted_results[i]['popularity']}')
 
 
-retrieve_spotify_data('rock', 1990)
+def main():
+    genre_options = ["Rock", "Pop", "Jazz", "Country", "R&B"]
+    decade_options = [1970, 1980, 1990, 2000, 2010, 2020]
+    genre = input(f"Please select the genre of music you'd like to guess. Available options: {", ".join(genre_options)}\n"
+                  f"Choice: ").title()
+    if genre not in genre_options:
+        print("Sorry, that's an invalid input")
+    else:
+        decade = int(input(f'Now please select the decade from the following options: {", ".join(str(decade) for decade in decade_options)}.\nChoice: '))
+        if decade not in decade_options:
+            print("Sorry, that's an invalid input")
+        else:
+            retrieve_spotify_data(genre, decade)
+
+
+main()
+
 
 
 # directory = os.fsencode('songs')
