@@ -84,12 +84,15 @@ def start_game(genre, year, difficulty):
         else:
             print('Sorry, you got that wrong.\n')
         if exit:
-            sys.exit(f'\nThank you for playing the game. Your final score is {score}.')
+            sys.exit(f'\nThank you for playing the game. Your final score is {score} out of {(i+1)*3}.')
         
         print('________________________')
-        print(f'|Total score so far: {score}.|')
+        print(f'|Total score so far: {score} out of {(i+1)*3}.|')
         print('‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n')
         time.sleep(1.5)
+        
+    sys.exit(f'\nThank you for playing the game. Your final score is {score} out of {(i+1)*3}.')
+
 
 def get_difficulty():
     difficulty_options = ['Easy', 'Normal', "Hard"]
