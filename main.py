@@ -7,7 +7,6 @@ import pandas
 import sys
 from spotify_genres import available_genres
 
-
 def play_song(song):
     pygame.mixer.init()
     file = pygame.mixer.Sound(f"./songs/{song}.mp3")
@@ -59,7 +58,7 @@ def start_game(genre, year, difficulty):
         print(f'Now playing song {i}/{len(songs_to_play)}.\n')
         play_song(song)
         if difficulty == 'Easy':
-            print(song[0:4])
+            print(f"Hint: {song[0:4]}...")
         title = input("What song is it? 🎶 (Type 'r' if you want to listen to the song again.)\n").lower()
         if title == 'r':
             play_song(song)
@@ -71,7 +70,7 @@ def start_game(genre, year, difficulty):
             print('Sorry, you got that wrong.\n')
         
         if difficulty == 'Easy':
-            print(df[df['title'] == song]['artist'].values[0][0:4])
+            print(f"Hint: {df[df['title'] == song]['artist'].values[0][0:4]}...")
         artist = input("What's the artist? 🧑‍🎤\n").lower()
         if artist == df[df['title'] == song]['artist'].values[0].lower():
             score += 1
@@ -80,7 +79,7 @@ def start_game(genre, year, difficulty):
             print('Sorry, you got that wrong.\n')
 
         if difficulty == 'Easy':
-            print(df[df['title'] == song]['album'].values[0][0:4])
+            print(f"Hint: {df[df['title'] == song]['album'].values[0][0:4]}...")
         album = input("And what's the album? 🎼 (You can type '(exit)' at the end to computate this answer and stop the game)\n").lower()
         if '(exit)' in album:
             album = album[0:album.find(' (exit)')]

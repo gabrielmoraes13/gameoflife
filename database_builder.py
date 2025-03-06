@@ -61,7 +61,9 @@ def update_database(results, genre, year):
     filtered_database = []
     try:
         df = pandas.read_csv('data/songs_database.csv')
-        filtered_database = df[df['genre'] == genre]['title'].values.tolist()
+        filtered_df = df[df['genre'] == genre]['title'].values.tolist()
+        print(filtered_df)
+
     except FileNotFoundError:
         pass
 
@@ -85,8 +87,7 @@ def update_database(results, genre, year):
             clean_album_title = track['album']['name'][0:album_index]
         else:
             clean_album_title = track['album']['name']
-        if clean_track_title not in filtered_database:
-            print(f'{clean_track_title} not in {filtered_database}')
+        if clean_track_title not in filtered_df:
             songs['title'].append(clean_track_title)
             songs['artist'].append(track['artists'][0]["name"])
             songs['album'].append(clean_album_title)
