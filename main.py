@@ -2,9 +2,10 @@ import random
 import pygame
 import time
 from math import floor
-from database_builder import download_youtube_audio, retrieve_spotify_data
+from database_builder import retrieve_spotify_data
 import pandas
 import sys
+from spotify_genres import available_genres
 
 
 def play_song(song):
@@ -18,11 +19,17 @@ def play_song(song):
 
 def get_genre():
     genre_options = ["Rock", "Pop", "Jazz", "Country", "R&B"]
-    genre = input(f"\nPlease select the genre of music you'd like to guess. Available options: {", ".join(genre_options)}\n"
+    genre = input(f"\nPlease select the genre of music you'd like to guess. Suggested genres options: {", ".join(genre_options)}\n"
+                  f"For the full list of genres, please type 'List'.\n"
                   f"Choice: ").title().strip()
-    if genre not in genre_options:
-        print("Sorry, that's an invalid input")
-        get_genre
+    if genre not in available_genres:
+        if genre != 'List':
+             print("Sorry, that's an invalid input")
+             get_genre()
+        else:
+            for genre in available_genres:
+                print(genre)
+            get_genre()
     else:
         return genre
 
@@ -90,7 +97,7 @@ def start_game(genre, year, difficulty):
         print(f'|Total score so far: {score} out of {(i+1)*3}.|')
         print('‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n')
         time.sleep(1.5)
-        
+
     sys.exit(f'\nThank you for playing the game. Your final score is {score} out of {(i+1)*3}.')
 
 
