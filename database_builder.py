@@ -58,7 +58,7 @@ def retrieve_spotify_data(genre, start_year, limit=30):
 
 
 def update_database(results, genre, year):
-    filtered_database = []
+    filtered_df = []
     try:
         df = pandas.read_csv('data/songs_database.csv')
         filtered_df = df[df['genre'] == genre]['title'].values.tolist()
@@ -69,7 +69,7 @@ def update_database(results, genre, year):
 
     songs = {
         'title': [],
-        'artist': [],
+        'artists': [],
         'album': [],
         'genre': [],
         'popularity': [],
@@ -89,7 +89,12 @@ def update_database(results, genre, year):
             clean_album_title = track['album']['name']
         if clean_track_title not in filtered_df:
             songs['title'].append(clean_track_title)
-            songs['artist'].append(track['artists'][0]["name"])
+            artists = track['artists'][0]["name"]
+            try:
+                artists += " | " + track['artists'][1]["name"]
+            except IndexError:
+                pass
+            songs['artists'].append(artists)
             songs['album'].append(clean_album_title)
             songs['genre'].append(genre)
             songs['popularity'].append(track['popularity'])
