@@ -25,7 +25,7 @@ class UserInterface:
     def __init__(self):
         self.window = Tk()
         self.window.minsize(height=600, width=920)
-        self.window.title("GUess")
+        self.window.title("Guess the song!")
         self.window.config(padx=60, pady=20, bg=COLOR_3)
         self.score = 0
 
@@ -128,11 +128,13 @@ class UserInterface:
 
         self.window.mainloop()
 
+
     def retrieve_data(self, difficulty, genre, year):
         retrieve_spotify_data(genre, year) 
+        if difficulty == 'Hard':
+            year = random.choice(1990, 2000, 2010, 2020)
         self.fetch_songs(difficulty, genre, year)
-
-
+        
 
     def fetch_songs(self, difficulty, genre, year):
         self.difficulty = difficulty
@@ -143,11 +145,11 @@ class UserInterface:
         self.songs_played = 0
         self.open_guess_window()
         
+
     def open_guess_window(self):
         for widget in self.window.winfo_children():
             widget.destroy()
 
-        
         image = PhotoImage(file="assets/question-mark.png").subsample(2, 2)
         self.label = Label(self.window, image=image, bg=COLOR_3)
         self.label.place(x=3000, y=3000)
@@ -171,8 +173,6 @@ class UserInterface:
 
         song_et = Entry(width=30)
         song_et.place(x=40, y=420)
-
-
 
         artist_lb = Label(
         text="What's the artist?",
@@ -268,8 +268,6 @@ class UserInterface:
         self.bg_lb = Label(self.window, image=photo, bg=COLOR_3)
         self.bg_lb.place(x=260, y=60)
 
-
-
         song_text = f"The song was: {self.songs_to_play[self.songs_played]} {emojis[0]}"
         artist_text = f"The artist was: {', '.join(self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['artists'].values[0].split(" | "))} {emojis[1]}"
         album_text = f"The album was: {self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['album'].values[0]} {emojis[2]}"
@@ -297,7 +295,6 @@ class UserInterface:
         )
         album_answer.place(x=260, y=450)
 
-
         next_song_btn = Button(
             text="Skip results",
             width=25,
@@ -316,6 +313,7 @@ class UserInterface:
         
         self.window.mainloop()
 
+
     def check_guesses(self, g_song, g_artist, g_album):
         song_right = False
         artist_right = False
@@ -332,6 +330,7 @@ class UserInterface:
 
         self.open_answer_window(answers=(song_right, artist_right, album_right))
         
+
     def play_song(self):
         song = self.songs_to_play[self.songs_played]
         pygame.mixer.init()
@@ -350,9 +349,6 @@ class UserInterface:
 
         image = Image.open(io.BytesIO(raw_data))
         photo = ImageTk.PhotoImage(image)
-
-
-
         label = Label(self.window, image=photo)
         label.place(x=60, y=60)
 
