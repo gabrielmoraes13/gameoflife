@@ -23,7 +23,7 @@
 <br />
 <div align="center">
   <a href="https://m.media-amazon.com/images/I/81NF853al9L.png">
-    <img src="assets/guess_logo.png" alt="Logo" width="400" height="300">
+    <img src="assets/guess_logo.png" alt="Logo" width="450" height="300">
   </a>
 
   <h3 align="center">Guess the song!</h3>
@@ -41,9 +41,6 @@
   <ol>
     <li>
       <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
     </li>
     <li>
       <a href="#getting-started">Getting Started</a>
@@ -52,12 +49,6 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
