@@ -69,7 +69,19 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
+This program does not use any premium services like Spotify or Soundcloud, so it's completely free to use.
+
+Due to that, to be able to have music data, it extracts .mp3 files from YouTube videos, so once the user selects their game parameters, the songs will be download for the first time.
+
+That adds a little bit of wait time to the user, but it guarantees a completely free experience, only a Spotify API key is necessary, but it's free as well.
+
+There are 3 possible difficulties, 72 music genres and 5 decades to choose from.
+
+The difficulties work as follows:
+
+- Easy -> The user can select the genre and the year and they are hinted the 4 first letters of each guess.
+- Normal -> The user can select the genre and the year, but they get no hints.
+- Hard -> The user can select only the genre, the year will be randomly chosen from the 90s to 2020.
 
 Here's why:
 
