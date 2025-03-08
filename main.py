@@ -1,11 +1,3 @@
-import random
-import pygame
-import time
-from math import floor
-from database_builder import retrieve_spotify_data
-import pandas
-import sys
-from spotify_genres import available_genres
 from screen import UserInterface
 
 
