@@ -47,7 +47,7 @@ def download_youtube_audio(output_folder="./songs"):
                     print("No results found.")
 
 
-def retrieve_spotify_data(genre, start_year, limit=1):
+def retrieve_spotify_data(genre, start_year, limit=30):
     query = f"genre:{genre} year:{start_year}-{min(start_year + 9, 2025)}"
     try:
         results = sp.search(q=query, type="track", limit=limit, market="US")
