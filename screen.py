@@ -12,11 +12,8 @@ import time
 from math import floor
 from database_builder import retrieve_spotify_data
 
-
-MAIN_COLOR = "#222831"
-SECONDARY_COLOR = "#393E46"
-COLOR_3 = "#00ADB5"
-COLOR_4 = "#EEEEEE"
+MAIN_COLOR = "#00ADB5"
+SECONDARY_COLOR = "#EEEEEE"
 PRIMARY_FONT = ('Arial', 10, 'bold')
 SECONDARY_FONT = ('Arial', 12, 'bold')
 TERTIARY_FONT = ('Arial', 10)
@@ -26,7 +23,7 @@ class UserInterface:
         self.window = Tk()
         self.window.minsize(height=600, width=920)
         self.window.title("Guess the song!")
-        self.window.config(padx=60, pady=20, bg=COLOR_3)
+        self.window.config(padx=60, pady=20, bg=MAIN_COLOR)
         self.score = 0
 
 
@@ -36,8 +33,8 @@ class UserInterface:
 
         game_start_lb = Label(
             text="Choose the options for your guessing game.",
-            fg=COLOR_4,
-            bg=COLOR_3,
+            fg=SECONDARY_COLOR,
+            bg=MAIN_COLOR,
             font=SECONDARY_FONT
         )
         game_start_lb.place(x=220, y=50)
@@ -45,7 +42,7 @@ class UserInterface:
         easy_lb = Label(
             text="Easy: You select the genre and the decade, and the first 4 letters of each guess will be revealed.",
             fg='black',
-            bg=COLOR_3,
+            bg=MAIN_COLOR,
             font=TERTIARY_FONT
         )
         easy_lb.place(x=110, y=80)
@@ -54,7 +51,7 @@ class UserInterface:
         normal_lb = Label(
             text="Normal: You select the genre and the decade, and you won't get any hints.",
             fg='black',
-            bg=COLOR_3,
+            bg=MAIN_COLOR,
             font=TERTIARY_FONT
         )
         normal_lb.place(x=110, y=100)
@@ -62,15 +59,15 @@ class UserInterface:
         hard_lb = Label(
             text="Hard: You can select only the genre, the decade will be random, ranging from the 90s to 2020.",
             fg='black',
-            bg=COLOR_3,
+            bg=MAIN_COLOR,
             font=TERTIARY_FONT
         )
         hard_lb.place(x=110, y=120)
 
         difficulty_lb = Label(
             text="Choose the level",
-            fg=COLOR_4,
-            bg=COLOR_3,
+            fg=SECONDARY_COLOR,
+            bg=MAIN_COLOR,
             font=SECONDARY_FONT
         )
         difficulty_lb.place(x=150, y=220)
@@ -82,8 +79,8 @@ class UserInterface:
 
         genre_lb = Label(
             text="Choose a genre",
-            fg=COLOR_4,
-            bg=COLOR_3,
+            fg=SECONDARY_COLOR,
+            bg=MAIN_COLOR,
             font=SECONDARY_FONT
         )
         genre_lb.place(x=150, y=270)
@@ -95,8 +92,8 @@ class UserInterface:
 
         year_lb = Label(
             text="Choose the decade",
-            fg=COLOR_4,
-            bg=COLOR_3,
+            fg=SECONDARY_COLOR,
+            bg=MAIN_COLOR,
             font=SECONDARY_FONT
         )
         year_lb.place(x=150, y=320)
@@ -108,8 +105,8 @@ class UserInterface:
 
         disclaimer_lb = Label(
             text="Please wait until the download is complete. It might take up to 5 minutes.\nIf you have downloaded the songs before, the game will skip to the next window.",
-            fg=COLOR_4,
-            bg=COLOR_3,
+            fg=SECONDARY_COLOR,
+            bg=MAIN_COLOR,
             font=PRIMARY_FONT
         )
         disclaimer_lb.place(x=150, y=450)
@@ -151,22 +148,22 @@ class UserInterface:
             widget.destroy()
 
         image = PhotoImage(file="assets/question-mark.png").subsample(2, 2)
-        self.label = Label(self.window, image=image, bg=COLOR_3)
+        self.label = Label(self.window, image=image, bg=MAIN_COLOR)
         self.label.place(x=3000, y=3000)
         self.label.place(x=260, y=60)
 
         score_lb = Label(
         text=f"Current score: {self.score}/{self.songs_played*3}",
-        fg=COLOR_4,
-        bg=COLOR_3,
+        fg=SECONDARY_COLOR,
+        bg=MAIN_COLOR,
         font=SECONDARY_FONT
         )
         score_lb.place(x=50, y=180)
 
         song_lb = Label(
         text="What's the song?",
-        fg=COLOR_4,
-        bg=COLOR_3,
+        fg=SECONDARY_COLOR,
+        bg=MAIN_COLOR,
         font=SECONDARY_FONT
         )
         song_lb.place(x=60, y=390)
@@ -176,8 +173,8 @@ class UserInterface:
 
         artist_lb = Label(
         text="What's the artist?",
-        fg=COLOR_4,
-        bg=COLOR_3,
+        fg=SECONDARY_COLOR,
+        bg=MAIN_COLOR,
         font=SECONDARY_FONT
         )
         artist_lb.place(x=320, y=390)
@@ -187,8 +184,8 @@ class UserInterface:
 
         album_lb = Label(
             text="What's the album?",
-            fg=COLOR_4,
-            bg=COLOR_3,
+            fg=SECONDARY_COLOR,
+            bg=MAIN_COLOR,
             font=SECONDARY_FONT
         )
         album_lb.place(x=580, y=390)
@@ -226,7 +223,7 @@ class UserInterface:
             song_hint = Label(
             text=f"Hint: {self.songs_to_play[self.songs_played][0:4]}...",
             fg='black',
-            bg=COLOR_3,
+            bg=MAIN_COLOR,
             font=TERTIARY_FONT
             )
             song_hint.place(x=70, y=450)
@@ -235,7 +232,7 @@ class UserInterface:
             artist_hint = Label(
             text=f"Hint: {', '.join(artists)}...",
             fg='black',
-            bg=COLOR_3,
+            bg=MAIN_COLOR,
             font=TERTIARY_FONT
             )
             artist_hint.place(x=350, y=450)
@@ -243,7 +240,7 @@ class UserInterface:
             artist_hint = Label(
             text=f"Hint: {self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['album'].values[0][0:4]}...",
             fg='black',
-            bg=COLOR_3,
+            bg=MAIN_COLOR,
             font=TERTIARY_FONT
             )
             artist_hint.place(x=610, y=450)
@@ -265,7 +262,7 @@ class UserInterface:
         image = Image.open(io.BytesIO(raw_data))
         photo = ImageTk.PhotoImage(image)
 
-        self.bg_lb = Label(self.window, image=photo, bg=COLOR_3)
+        self.bg_lb = Label(self.window, image=photo, bg=MAIN_COLOR)
         self.bg_lb.place(x=260, y=60)
 
         song_text = f"The song was: {self.songs_to_play[self.songs_played]} {emojis[0]}"
@@ -273,24 +270,24 @@ class UserInterface:
         album_text = f"The album was: {self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['album'].values[0]} {emojis[2]}"
         song_answer = Label(
         text=song_text,
-        fg=COLOR_4,
-        bg=COLOR_3,
+        fg=SECONDARY_COLOR,
+        bg=MAIN_COLOR,
         font=SECONDARY_FONT
         )
         song_answer.place(x=260, y=390)
         
         artist_answer = Label(
         text=artist_text,
-        fg=COLOR_4,
-        bg=COLOR_3,
+        fg=SECONDARY_COLOR,
+        bg=MAIN_COLOR,
         font=SECONDARY_FONT
         )
         artist_answer.place(x=260, y=420)
         
         album_answer = Label(
         text=album_text,
-        fg=COLOR_4,
-        bg=COLOR_3,
+        fg=SECONDARY_COLOR,
+        bg=MAIN_COLOR,
         font=SECONDARY_FONT
         )
         album_answer.place(x=260, y=450)
@@ -305,8 +302,8 @@ class UserInterface:
         self.songs_played += 1
         score_lb = Label(
         text=f"Current score: {self.score}/{self.songs_played*3}",
-        fg=COLOR_4,
-        bg=COLOR_3,
+        fg=SECONDARY_COLOR,
+        bg=MAIN_COLOR,
         font=SECONDARY_FONT
         )
         score_lb.place(x=50, y=180)
