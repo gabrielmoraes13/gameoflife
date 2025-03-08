@@ -35,7 +35,7 @@ class UserInterface:
             widget.destroy()
 
         game_start_lb = Label(
-            text="Choose the options for you guessing game.",
+            text="Choose the options for your guessing game.",
             fg=COLOR_4,
             bg=COLOR_3,
             font=SECONDARY_FONT
