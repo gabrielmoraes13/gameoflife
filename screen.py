@@ -1,11 +1,8 @@
 import pandas
 import random
 import sys
-import tkinter
-# from tabulate import tabulate
 from tkinter import *
-from tkinter import messagebox, ttk
-from datetime import datetime
+from tkinter import ttk
 from spotify_genres import available_genres
 from PIL import ImageTk, Image
 import io
@@ -23,17 +20,6 @@ COLOR_4 = "#EEEEEE"
 PRIMARY_FONT = ('Arial', 10, 'bold')
 SECONDARY_FONT = ('Arial', 12, 'bold')
 TERTIARY_FONT = ('Arial', 10)
-
-# class WebImage:
-#     def __init__(self, url):
-#         with urllib.request.urlopen(url) as u:
-#             raw_data = u.read()
-#         #self.image = tk.PhotoImage(data=base64.encodebytes(raw_data))
-#         image = Image.open(io.BytesIO(raw_data))
-#         self.image = ImageTk.PhotoImage(image)
-
-#     def get(self):
-#         return self.image
 
 class UserInterface:
     def __init__(self):
@@ -372,5 +358,3 @@ class UserInterface:
 
     def quit_game(self):
         sys.exit()
-window = UserInterface()
-window.open_starting_window()
