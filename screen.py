@@ -200,13 +200,15 @@ class UserInterface:
 
         album_et = Entry(width=30)
         album_et.place(x=560, y=420)
-
-        play_song_btn = Button(
+        
+        self.play_count = 0
+        self.play_song_btn = Button(
             text="Play song",
             width=25,
+            state='normal',
             command=lambda: self.play_song()
         )
-        play_song_btn.place(x=200, y=500)
+        self.play_song_btn.place(x=200, y=500)
 
         self.register_answer_btn = Button(
             text="Register guesses",
@@ -304,14 +306,14 @@ class UserInterface:
 
         if self.songs_played < len(self.songs_to_play):
             next_song_btn = Button(
-                text="Skip results.",
+                text="Skip results",
                 width=25,
                 command=self.open_guess_window,
             )
             
         else:
             next_song_btn = Button(
-                text="You reached the end. Quit game.",
+                text="You reached the end. Quit game",
                 width=25,
                 command=self.quit_game,
             )
@@ -345,6 +347,9 @@ class UserInterface:
         
 
     def play_song(self):
+        self.play_count += 1
+        if self.play_count == 2:
+            self.play_song_btn.config(state='disabled')
         song = self.songs_to_play[self.songs_played]
         pygame.mixer.init()
         file = pygame.mixer.Sound(f"./songs/{song}.mp3")
