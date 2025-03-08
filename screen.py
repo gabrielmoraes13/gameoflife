@@ -104,7 +104,7 @@ class UserInterface:
 
         genre_cb = ttk.Combobox(self.window, width=30, state='readonly')
         genre_cb['values'] = available_genres
-        genre_cb.current(79)
+        genre_cb.current(54)
         genre_cb.place(x=320, y=270)
 
         year_lb = Label(
