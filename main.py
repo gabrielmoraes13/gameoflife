@@ -6,7 +6,8 @@ def main():
     game_window.open_starting_window()
 
 
-main()
+if __name__ == "__main__":
+    main()
 
 
 

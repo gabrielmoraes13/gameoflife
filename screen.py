@@ -177,7 +177,15 @@ class UserInterface:
         bg=MAIN_COLOR,
         font=SECONDARY_FONT
         )
-        artist_lb.place(x=320, y=390)
+        artist_lb.place(x=320, y=380)
+
+        artist_disc_lb = Label(
+        text="(If there's more than 1, please input only 1)",
+        fg='black',
+        bg=MAIN_COLOR,
+        font=TERTIARY_FONT
+        )
+        artist_disc_lb.place(x=270, y=400)
 
         artist_et = Entry(width=30)
         artist_et.place(x=300, y=420)
@@ -266,7 +274,7 @@ class UserInterface:
         self.bg_lb.place(x=260, y=60)
 
         song_text = f"The song was: {self.songs_to_play[self.songs_played]} {emojis[0]}"
-        artist_text = f"The artist was: {', '.join(self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['artists'].values[0].split(" | "))} {emojis[1]}"
+        artist_text = f"The artist was: {' & '.join(self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['artists'].values[0].split(" | "))} {emojis[1]}"
         album_text = f"The album was: {self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['album'].values[0]} {emojis[2]}"
         song_answer = Label(
         text=song_text,
@@ -291,15 +299,23 @@ class UserInterface:
         font=SECONDARY_FONT
         )
         album_answer.place(x=260, y=450)
-
-        next_song_btn = Button(
-            text="Skip results",
-            width=25,
-            command=self.open_guess_window,
-        )
-        next_song_btn.place(x=300, y=500)
         
         self.songs_played += 1
+
+        if self.songs_played < len(self.songs_to_play):
+            next_song_btn = Button(
+                text="Skip results.",
+                width=25,
+                command=self.open_guess_window,
+            )
+            
+        else:
+            next_song_btn = Button(
+                text="You reached the end. Quit game.",
+                width=25,
+                command=self.quit_game,
+            )
+        next_song_btn.place(x=300, y=500)
         score_lb = Label(
         text=f"Current score: {self.score}/{self.songs_played*3}",
         fg=SECONDARY_COLOR,
@@ -315,14 +331,14 @@ class UserInterface:
         song_right = False
         artist_right = False
         album_right = False
-        if str(g_song).lower().strip() == self.songs_to_play[self.songs_played]:
-            score += 1
+        if str(g_song).lower().strip() == self.songs_to_play[self.songs_played].lower():
+            self.score += 1
             song_right = True
         if str(g_artist).lower().strip() in  self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['artists'].values[0].lower().split(" | "):
-            score += 1
+            self.score += 1
             artist_right = True
         if str(g_album).lower().strip() ==  self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['album'].values[0].lower():
-            score += 1
+            self.score += 1
             album_right = True
 
         self.open_answer_window(answers=(song_right, artist_right, album_right))
