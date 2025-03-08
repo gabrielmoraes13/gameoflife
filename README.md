@@ -83,6 +83,7 @@ External libraries needed:
 - yt_dlp
 - spotipy
 - pillow
+- pygame
 
 ### Installation
 
@@ -90,7 +91,7 @@ External libraries needed:
 
 2. From the terminal window, install the needed libraries:
    ```sh
-   pip install pandas tk yt_dlp spotipy pillow
+   pip install pandas tk yt_dlp spotipy pillow pygame
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
