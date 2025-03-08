@@ -49,7 +49,7 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-  </ol>
+    <li><a href="#usage">Usage</a></li>
 </details>
 
 <!-- ABOUT THE PROJECT -->
