@@ -25,7 +25,7 @@
 <br />
 <div align="center">
   <a href="https://m.media-amazon.com/images/I/81NF853al9L.png">
-    <img src="assets/guess_logo.png" alt="Logo" width="80" height="80">
+    <img src="assets/guess_logo.png" alt="Logo" width="300" height="300">
   </a>
 
   <h3 align="center">Best-README-Template</h3>
