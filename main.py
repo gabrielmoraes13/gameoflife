@@ -7,45 +7,6 @@ import pandas
 import sys
 from spotify_genres import available_genres
 
-def play_song(song):
-    pygame.mixer.init()
-    file = pygame.mixer.Sound(f"./songs/{song}.mp3")
-    start_time = random.randint(10, floor(file.get_length()) - 20)
-    pygame.mixer.music.load(f"./songs/{song}.mp3")
-    pygame.mixer.music.play(start=start_time)
-    time.sleep(7)
-    pygame.mixer.music.stop()
-
-def get_genre():
-    genre_options = ["Rock", "Pop", "Jazz", "Country", "R&B"]
-    genre = input(f"\nPlease select the genre of music you'd like to guess. Suggested genres options: {", ".join(genre_options)}\n"
-                  f"For the full list of genres, please type 'List'.\n"
-                  f"Choice: ").title().strip()
-    if genre not in available_genres:
-        if genre != 'List':
-             print("Sorry, that's an invalid input")
-             get_genre()
-        else:
-            for genre in available_genres:
-                print(genre)
-            get_genre()
-    else:
-        return genre
-
-def get_decade():
-    decade_options = [1970, 1980, 1990, 2000, 2010, 2020]
-    decade = int(input(f"\n_____________________________________________________________________________________________________________________________\n"
-                       f"|Now please select the decade from the following options: {", ".join(str(decade) for decade in decade_options)}.                                |\n"
-                       f"|After this input the program will download the mp3 files needed for you to play the game, please give it a few minutes.     |\n"
-                       f"|If the songs have been downloaded previously already, the program will skip to the playing part.                            |\n"
-                       f"¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\n"
-                       f"Choice: "))
-    if decade not in decade_options:
-        print("Sorry, that's an invalid input")
-        get_decade()
-    else:
-        return decade
-        
 
 def start_game(genre, year, difficulty):
     df = pandas.read_csv('data/songs_database.csv')

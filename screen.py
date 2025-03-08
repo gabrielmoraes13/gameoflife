@@ -7,29 +7,79 @@ from tkinter import *
 from tkinter import messagebox, ttk
 from datetime import datetime
 from spotify_genres import available_genres
+from PIL import ImageTk, Image
+import io
+import urllib.request
+import pygame
+import time
+from math import floor
+from database_builder import retrieve_spotify_data
+
 
 MAIN_COLOR = "#222831"
 SECONDARY_COLOR = "#393E46"
 COLOR_3 = "#00ADB5"
 COLOR_4 = "#EEEEEE"
+PRIMARY_FONT = ('Arial', 10, 'bold')
 SECONDARY_FONT = ('Arial', 12, 'bold')
+TERTIARY_FONT = ('Arial', 10)
+
+# class WebImage:
+#     def __init__(self, url):
+#         with urllib.request.urlopen(url) as u:
+#             raw_data = u.read()
+#         #self.image = tk.PhotoImage(data=base64.encodebytes(raw_data))
+#         image = Image.open(io.BytesIO(raw_data))
+#         self.image = ImageTk.PhotoImage(image)
+
+#     def get(self):
+#         return self.image
 
 class UserInterface:
     def __init__(self):
         self.window = Tk()
         self.window.minsize(height=600, width=920)
-        self.window.title("Quizzer")
+        self.window.title("GUess")
         self.window.config(padx=60, pady=20, bg=COLOR_3)
-        self.enter_test_button: type[tkinter.Button]
-        self.enter_practice_button: type[tkinter.Button]
-        self.edit_button: type[tkinter.Button]
-        self.delete_database_button: type[tkinter.Button]
-        self.view_statistics_button: type[tkinter.Button]
+        self.score = 0
 
 
     def open_starting_window(self):
         for widget in self.window.winfo_children():
             widget.destroy()
+
+        game_start_lb = Label(
+            text="Choose the options for you guessing game.",
+            fg=COLOR_4,
+            bg=COLOR_3,
+            font=SECONDARY_FONT
+        )
+        game_start_lb.place(x=220, y=50)
+
+        easy_lb = Label(
+            text="Easy: You select the genre and the decade, and the first 4 letters of each guess will be revealed.",
+            fg='black',
+            bg=COLOR_3,
+            font=TERTIARY_FONT
+        )
+        easy_lb.place(x=110, y=80)
+
+        
+        normal_lb = Label(
+            text="Normal: You select the genre and the decade, and you won't get any hints.",
+            fg='black',
+            bg=COLOR_3,
+            font=TERTIARY_FONT
+        )
+        normal_lb.place(x=110, y=100)
+
+        hard_lb = Label(
+            text="Hard: You can select only the genre, the decade will be random, ranging from the 90s to 2020.",
+            fg='black',
+            bg=COLOR_3,
+            font=TERTIARY_FONT
+        )
+        hard_lb.place(x=110, y=120)
 
         difficulty_lb = Label(
             text="Choose the level",
@@ -37,12 +87,12 @@ class UserInterface:
             bg=COLOR_3,
             font=SECONDARY_FONT
         )
-        difficulty_lb.place(x=150, y=120)
+        difficulty_lb.place(x=150, y=220)
 
         difficulty_cb = ttk.Combobox(self.window, width=30, state='readonly')
         difficulty_cb['values'] = ['Easy', 'Normal', 'Hard']
         difficulty_cb.current(1)
-        difficulty_cb.place(x=320, y=120)
+        difficulty_cb.place(x=320, y=220)
 
         genre_lb = Label(
             text="Choose a genre",
@@ -50,12 +100,12 @@ class UserInterface:
             bg=COLOR_3,
             font=SECONDARY_FONT
         )
-        genre_lb.place(x=150, y=200)
+        genre_lb.place(x=150, y=270)
 
         genre_cb = ttk.Combobox(self.window, width=30, state='readonly')
         genre_cb['values'] = available_genres
-        genre_cb.current(86)
-        genre_cb.place(x=320, y=200)
+        genre_cb.current(79)
+        genre_cb.place(x=320, y=270)
 
         year_lb = Label(
             text="Choose the decade",
@@ -63,528 +113,264 @@ class UserInterface:
             bg=COLOR_3,
             font=SECONDARY_FONT
         )
-        year_lb.place(x=150, y=280)
+        year_lb.place(x=150, y=320)
 
         year_cb = ttk.Combobox(self.window, width=30, state='readonly')
         year_cb['values'] = ['1970', '1980', '1990', '2000', '2010', '2020']
         year_cb.current(5)
-        year_cb.place(x=320, y=280)
+        year_cb.place(x=320, y=320)
 
+        disclaimer_lb = Label(
+            text="Please wait until the download is complete. It might take up to 5 minutes.\nIf you have downloaded the songs before, the game will skip to the next window.",
+            fg=COLOR_4,
+            bg=COLOR_3,
+            font=PRIMARY_FONT
+        )
+        disclaimer_lb.place(x=150, y=450)
 
-        # add_questions_button = Button(
-        #     text="Add questions",
-        #     width=25,
-        #     command=lambda: self.check_entries(
-        #         difficulty_cb.get(),
-        #         genre_cb.get(),
-        #         year_cb.get(),
-        #     )
-        # )
-        add_questions_button = Button(
+        add_songs_btn = Button(
             text="Add questions",
             width=25,
-            command=self.open_game_window
-            
+            command=lambda: self.retrieve_data(
+                difficulty_cb.get(),
+                genre_cb.get(),
+                int(year_cb.get()),
+            )
         )
-        add_questions_button.place(x=300, y=500)
 
+        add_songs_btn.place(x=300, y=500)
 
         self.window.mainloop()
 
-
     def retrieve_data(self, difficulty, genre, year):
         retrieve_spotify_data(genre, year) 
-        confirmation = messagebox.askyesno('Do you want to start the game?')
-        if confirmation == True:
-            start_game(genre, decade, difficulty)
-        else:
-            sys.exit('The program has been shut down.')
+        self.fetch_songs(difficulty, genre, year)
 
 
-    def open_wait_window(self):
-        for widget in self.window.winfo_children():
-            widget.destroy()
 
-        wait_lb = Label(
-            text="Please wait until the download is complete.\nIt might take up to 5 minutes.",
-            fg=COLOR_4,
-            bg=COLOR_3,
-            font=('Arial', 15, 'bold')
-        )
-        wait_lb.place(x=200, y=250)
-
-
-    def open_game_window(self):
-        for widget in self.window.winfo_children():
-            widget.destroy()
+    def fetch_songs(self, difficulty, genre, year):
+        self.difficulty = difficulty
+        self.df = pandas.read_csv('data/songs_database.csv')
+        self.filtered_df = self.df.loc[(self.df['genre'] == genre) & (self.df['year'] == year)]
+        self.songs_to_play = self.filtered_df['title'].values.tolist()
+        random.shuffle(self.songs_to_play)
+        self.songs_played = 0
+        self.open_guess_window()
         
-        song_lb = Label(
-        text="Choose the level",
+    def open_guess_window(self):
+        for widget in self.window.winfo_children():
+            widget.destroy()
+
+        
+        image = PhotoImage(file="assets/question-mark.png").subsample(2, 2)
+        self.label = Label(self.window, image=image, bg=COLOR_3)
+        self.label.place(x=3000, y=3000)
+        self.label.place(x=260, y=60)
+
+        score_lb = Label(
+        text=f"Current score: {self.score}/{self.songs_played*3}",
         fg=COLOR_4,
         bg=COLOR_3,
         font=SECONDARY_FONT
         )
-        song_lb.place(x=60, y=400)
+        score_lb.place(x=50, y=180)
+
+        song_lb = Label(
+        text="What's the song?",
+        fg=COLOR_4,
+        bg=COLOR_3,
+        font=SECONDARY_FONT
+        )
+        song_lb.place(x=60, y=390)
 
         song_et = Entry(width=30)
-        song_et.place(x=60, y=450)
+        song_et.place(x=40, y=420)
+
+
 
         artist_lb = Label(
-        text="Choose the level",
+        text="What's the artist?",
         fg=COLOR_4,
         bg=COLOR_3,
         font=SECONDARY_FONT
         )
-        artist_lb.place(x=320, y=400)
+        artist_lb.place(x=320, y=390)
 
         artist_et = Entry(width=30)
-        artist_et.place(x=320, y=450)
+        artist_et.place(x=300, y=420)
 
         album_lb = Label(
-            text="Choose the decade",
+            text="What's the album?",
             fg=COLOR_4,
             bg=COLOR_3,
             font=SECONDARY_FONT
         )
-        album_lb.place(x=580, y=400)
+        album_lb.place(x=580, y=390)
 
         album_et = Entry(width=30)
-        album_et.place(x=580, y=450)
+        album_et.place(x=560, y=420)
 
-        register_answer_btn = Button(
+        play_song_btn = Button(
+            text="Play song",
+            width=25,
+            command=lambda: self.play_song()
+        )
+        play_song_btn.place(x=200, y=500)
+
+        self.register_answer_btn = Button(
             text="Register guesses",
             width=25,
-            command=lambda: self.check_entries(
-                difficulty_cb.get(),
-                genre_cb.get(),
-                year_cb.get(),
+            state='disabled',
+            command=lambda: self.check_guesses(
+                song_et.get(),
+                artist_et.get(),
+                album_et.get(),
             )
         )
-        register_answer_btn.place(x=300, y=500)
-        # subtitle_label = Label(
-        #     text="You can ignore the 'incorrect answer fields' in case you want to add a freeform question",
-        #     fg=COLOR_4,
-        #     bg=COLOR_3,
-        #     font=('Arial', 12)
-        # )
-        # subtitle_label.place(x=110, y=90)
+        self.register_answer_btn.place(x=400, y=500)
 
-        # question_text_label = Label(
-        #     text="Question text",
-        #     fg=MAIN_COLOR,
-        #     bg=COLOR_3,
-        #     font=self.font_secondary_text
-        # )
-        # question_text_label.place(x=60, y=140)
+        self.quit_game_btn = Button(
+            text="Quit game",
+            width=25,
+            command=self.quit_game
+        )
+        self.quit_game_btn.place(x=300, y=530)
 
-        # question_text_entry = Entry(width=80)
-        # question_text_entry.place(x=230, y=140)
+        if self.difficulty == 'Easy':
+            song_hint = Label(
+            text=f"Hint: {self.songs_to_play[self.songs_played][0:4]}...",
+            fg='black',
+            bg=COLOR_3,
+            font=TERTIARY_FONT
+            )
+            song_hint.place(x=70, y=450)
 
-        # question_answer_label = Label(
-        #     text="Question answer",
-        #     fg=MAIN_COLOR,
-        #     bg=COLOR_3,
-        #     font=self.font_secondary_text
-        # )
-        # question_answer_label.place(x=60, y=200)
+            artists = [artist[0:4] for artist in self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['artists'].values[0].split(" | ")]
+            artist_hint = Label(
+            text=f"Hint: {', '.join(artists)}...",
+            fg='black',
+            bg=COLOR_3,
+            font=TERTIARY_FONT
+            )
+            artist_hint.place(x=350, y=450)
 
-        # question_answer_entry = Entry(width=80)
-        # question_answer_entry.place(x=230, y=200)
+            artist_hint = Label(
+            text=f"Hint: {self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['album'].values[0][0:4]}...",
+            fg='black',
+            bg=COLOR_3,
+            font=TERTIARY_FONT
+            )
+            artist_hint.place(x=610, y=450)
+        self.window.mainloop()
 
-        # incorrect_answer1_label = Label(
-        #     text="1st incorrect answer",
-        #     fg=MAIN_COLOR,
-        #     bg=COLOR_3,
-        #     font=self.font_secondary_text
-        # )
-        # incorrect_answer1_label.place(x=60, y=260)
 
-        # incorrect_answer1_entry = Entry(width=80)
-        # incorrect_answer1_entry.place(x=230, y=260)
+    def open_answer_window(self, answers):
+        emojis = []
+        for answer in answers:
+            if answer:
+                emojis.append("✅")
+            else:
+                emojis.append("❌")
+        for widget in self.window.winfo_children():
+            widget.destroy()
 
-        # incorrect_answer2_label = Label(
-        #     text="2nd incorrect answer",
-        #     fg=MAIN_COLOR,
-        #     bg=COLOR_3,
-        #     font=self.font_secondary_text
-        # )
-        # incorrect_answer2_label.place(x=60, y=320)
+        with urllib.request.urlopen(self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['album_cover'].values[0]) as u:
+            raw_data = u.read()
+        image = Image.open(io.BytesIO(raw_data))
+        photo = ImageTk.PhotoImage(image)
 
-        # incorrect_answer2_entry = Entry(width=80)
-        # incorrect_answer2_entry.place(x=230, y=320)
+        self.bg_lb = Label(self.window, image=photo, bg=COLOR_3)
+        self.bg_lb.place(x=260, y=60)
 
-        # incorrect_answer3_label = Label(
-        #     text="3rd incorrect answer",
-        #     fg=MAIN_COLOR,
-        #     bg=COLOR_3,
-        #     font=self.font_secondary_text
-        # )
-        # incorrect_answer3_label.place(x=60, y=380)
 
-        # incorrect_answer3_entry = Entry(width=80)
-        # incorrect_answer3_entry.place(x=230, y=380)
 
-        # add_multiple_choice_button = Button(
-        #     text=f"Add multiple choice question",
-        #     width=25,
-        #     command=lambda: self.add_question(
-        #         'multiple choice',
-        #         question_text_entry.get(),
-        #         question_answer_entry.get(),
-        #         incorrect_answer1_entry.get(),
-        #         incorrect_answer2_entry.get(),
-        #         incorrect_answer3_entry.get())
-        # )
-        # add_multiple_choice_button.place(x=180, y=440)
+        song_text = f"The song was: {self.songs_to_play[self.songs_played]} {emojis[0]}"
+        artist_text = f"The artist was: {', '.join(self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['artists'].values[0].split(" | "))} {emojis[1]}"
+        album_text = f"The album was: {self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['album'].values[0]} {emojis[2]}"
+        song_answer = Label(
+        text=song_text,
+        fg=COLOR_4,
+        bg=COLOR_3,
+        font=SECONDARY_FONT
+        )
+        song_answer.place(x=260, y=390)
+        
+        artist_answer = Label(
+        text=artist_text,
+        fg=COLOR_4,
+        bg=COLOR_3,
+        font=SECONDARY_FONT
+        )
+        artist_answer.place(x=260, y=420)
+        
+        album_answer = Label(
+        text=album_text,
+        fg=COLOR_4,
+        bg=COLOR_3,
+        font=SECONDARY_FONT
+        )
+        album_answer.place(x=260, y=450)
 
-        # add_freeform_button = Button(
-        #     text=f"Add as freeform question",
-        #     width=25,
-        #     command=lambda: self.add_question(
-        #         'free form',
-        #         question_text_entry.get(),
-        #         question_answer_entry.get())
-        # )
-        # add_freeform_button.place(x=400, y=440)
 
-        # self.enter_practice_button = Button(
-        #     text=f"Enter practice mode",
-        #     width=25,
-        #     command=lambda: self.initialize_test_window(
-        #         number=1,
-        #         weight='Yes')
-        # )
-        # self.enter_practice_button.place(x=180, y=490)
+        next_song_btn = Button(
+            text="Skip results",
+            width=25,
+            command=self.open_guess_window,
+        )
+        next_song_btn.place(x=300, y=500)
+        
+        self.songs_played += 1
+        score_lb = Label(
+        text=f"Current score: {self.score}/{self.songs_played*3}",
+        fg=COLOR_4,
+        bg=COLOR_3,
+        font=SECONDARY_FONT
+        )
+        score_lb.place(x=50, y=180)
+        
+        self.window.mainloop()
 
-        # self.enter_test_button = Button(
-        #     text=f"Enter test mode",
-        #     width=25,
-        #     command=self.enter_test_mode
-        # )
-        # self.enter_test_button.place(x=400, y=490)
+    def check_guesses(self, g_song, g_artist, g_album):
+        song_right = False
+        artist_right = False
+        album_right = False
+        if str(g_song).lower().strip() == self.songs_to_play[self.songs_played]:
+            score += 1
+            song_right = True
+        if str(g_artist).lower().strip() in  self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['artists'].values[0].lower().split(" | "):
+            score += 1
+            artist_right = True
+        if str(g_album).lower().strip() ==  self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['album'].values[0].lower():
+            score += 1
+            album_right = True
 
-        # return_home_button = Button(
-        #     text='Return to home page',
-        #     width=32,
-        #     command=self.open_starting_window
-        # )
-        # return_home_button.place(x=260, y=540)
+        self.open_answer_window(answers=(song_right, artist_right, album_right))
+        
+    def play_song(self):
+        song = self.songs_to_play[self.songs_played]
+        pygame.mixer.init()
+        file = pygame.mixer.Sound(f"./songs/{song}.mp3")
+        start_time = random.randint(10, floor(file.get_length()) - 20)
+        pygame.mixer.music.load(f"./songs/{song}.mp3")
+        pygame.mixer.music.play(start=start_time)
+        time.sleep(7)
+        pygame.mixer.music.stop()
+        self.register_answer_btn.config(state='normal')
+        
 
-        # self.update_buttons(add_questions_window=True)
+    def display_image_from_url(self, url):
+        with urllib.request.urlopen(url) as u:
+            raw_data = u.read()
 
-    # def open_enable_disable_window(self):
-    #     for widget in self.window.winfo_children():
-    #         widget.destroy()
+        image = Image.open(io.BytesIO(raw_data))
+        photo = ImageTk.PhotoImage(image)
 
-    #     enable_disable_label = Label(
-    #         text="Please type in the ID (as provided when viewing the statistics)\n"
-    #              "of the questions you would like to disable or enable.\n"
-    #              "In case you want to edit multiple questions,\n"
-    #              "please separate the values with commas.",
-    #         fg=MAIN_COLOR,
-    #         bg=COLOR_3,
-    #         font=('Arial', 12, 'bold')
-    #     )
-    #     enable_disable_label.place(x=160, y=100)
 
-    #     enable_disable_entry = Entry(width=43)
-    #     enable_disable_entry.place(x=260, y=220)
-    #     enable_disable_entry.focus()
 
-    #     disable_button = Button(
-    #         text='Disable',
-    #         width=28,
-    #         font=('Arial', 10),
-    #         command=lambda: self.quiz_features.edit_question(
-    #             state='No',
-    #             indexes=enable_disable_entry.get().split(','))
-    #     )
-    #     disable_button.place(x=120, y=250)
+        label = Label(self.window, image=photo)
+        label.place(x=60, y=60)
 
-    #     enable_button = Button(
-    #         text='Enable',
-    #         width=28,
-    #         font=('Arial', 10),
-    #         command=lambda: self.quiz_features.edit_question(
-    #             state='Yes',
-    #             indexes=enable_disable_entry.get().split(','))
-    #     )
-    #     enable_button.place(x=380, y=250)
-
-    #     return_home_button = Button(
-    #         text='Return to home page',
-    #         width=32,
-    #         font=('Arial', 10),
-    #         command=self.open_starting_window
-    #     )
-    #     return_home_button.place(x=240, y=300)
-
-    # def enter_test_mode(self):
-    #     for widget in self.window.winfo_children():
-    #         widget.destroy()
-
-    #     question_number_label = Label(
-    #         text=f"Choose how many questions you\n would like to have in this test.\n\n"
-    #              f"There are {self.quiz_features.get_questions_available()} questions available.",
-    #         fg=MAIN_COLOR,
-    #         bg=COLOR_3,
-    #         font=('Arial', 14, 'bold')
-    #     )
-    #     question_number_label.place(x=240, y=80)
-
-    #     question_number_entry = Entry(width=43)
-    #     question_number_entry.place(x=260, y=200)
-    #     question_number_entry.focus()
-
-    #     question_number_button = Button(
-    #         text='Confirm',
-    #         width=32,
-    #         font=('Arial', 10),
-    #         command=lambda: self.initialize_test_window(
-    #             number=question_number_entry.get())
-    #     )
-    #     question_number_button.place(x=260, y=230)
-
-    #     return_home_button = Button(
-    #         text='Return to home page',
-    #         width=32,
-    #         font=('Arial', 10),
-    #         command=self.open_starting_window
-    #     )
-    #     return_home_button.place(x=260, y=270)
-
-    # def initialize_test_window(self, number, weight=None):
-    #     self.questions_obj = Questions(number, self.quiz_features.get_questions_available(), weight)
-    #     if self.questions_obj:
-    #         for widget in self.window.winfo_children():
-    #             widget.destroy()
-    #         self.fetch_next_question(weight)
-
-    # def fetch_next_question(self, weight=None):
-    #     if weight == 'Yes':
-    #         self.current_question = self.questions_obj.next_question_practice()
-    #     else:
-    #         self.current_question = self.questions_obj.next_question_test()
-
-    #     try:
-    #         self.current_question.get('question index')
-    #         self.update_test_window(weight)
-    #     except AttributeError:
-    #         right_answers = self.current_question[0]
-    #         wrong_answers = self.current_question[1]
-    #         self.open_score_window(right_answers, wrong_answers, weight)
-
-    # def update_test_window(self, weight=None):
-
-    #     canvas = Canvas(width=800, height=526)
-    #     canvas_img = PhotoImage(file="images/card_front.png")
-    #     canvas.create_image(400, 263, image=canvas_img)
-    #     canvas.create_text(
-    #         400, 163,
-    #         text=self.current_question['question text'],
-    #         font=("Arial", 20, "bold"),
-    #         width=700
-    #     )
-
-    #     possible_answers = [str(self.current_question['correct answer']),
-    #                         str(self.current_question['incorrect answer 1']),
-    #                         str(self.current_question['incorrect answer 2']),
-    #                         str(self.current_question['incorrect answer 3'])]
-    #     random.shuffle(possible_answers)
-
-    #     question_index = self.current_question['question index']
-    #     correct_answer = str(self.current_question['correct answer'])
-
-    #     answer_1_button = Button(
-    #         text=possible_answers[0],
-    #         width=40,
-    #         font=('Arial', 10),
-    #         command=lambda: self.send_answer(
-    #             answer=possible_answers[0],
-    #             correct_answer=correct_answer,
-    #             index=question_index,
-    #             weight=weight)
-    #     )
-
-    #     answer_2_button = Button(
-    #         text=possible_answers[1],
-    #         width=40,
-    #         font=('Arial', 10),
-    #         command=lambda: self.send_answer(
-    #             answer=possible_answers[1],
-    #             correct_answer=correct_answer,
-    #             index=question_index,
-    #             weight=weight)
-    #     )
-
-    #     answer_3_button = Button(
-    #         text=possible_answers[2],
-    #         width=40,
-    #         font=('Arial', 10),
-    #         command=lambda: self.send_answer(
-    #             answer=possible_answers[2],
-    #             correct_answer=correct_answer,
-    #             index=question_index,
-    #             weight=weight)
-    #     )
-
-    #     answer_4_button = Button(
-    #         text=possible_answers[3],
-    #         width=40,
-    #         font=('Arial', 10),
-    #         command=lambda: self.send_answer(
-    #             answer=possible_answers[3],
-    #             correct_answer=correct_answer,
-    #             index=question_index,
-    #             weight=weight)
-    #     )
-
-    #     if self.current_question['question type'] == 'multiple choice':
-    #         answer_1_button.place(x=60, y=350)
-    #         answer_2_button.place(x=415, y=350)
-    #         answer_3_button.place(x=60, y=400)
-    #         answer_4_button.place(x=415, y=400)
-    #     else:
-    #         freeform_entry = Entry(width=43, fg='black')
-    #         freeform_entry.place(x=255, y=300)
-    #         freeform_entry.focus()
-
-    #         freeform_button = Button(
-    #             text='Submit',
-    #             width=15,
-    #             font=('Arial', 10),
-    #             command=lambda: self.send_answer(
-    #                 answer=freeform_entry.get().lower().strip(),
-    #                 correct_answer=correct_answer.lower(),
-    #                 index=question_index,
-    #                 weight=weight)
-    #         )
-
-    #         freeform_button.place(x=320, y=350)
-
-    #     if weight:
-    #         return_home_button = Button(
-    #             text='Return to home page',
-    #             width=32,
-    #             font=('Arial', 10),
-    #             command=self.open_starting_window
-    #         )
-    #         return_home_button.place(x=250, y=450)
-
-    #     canvas.config(bg=COLOR_3, highlightthickness=0)
-    #     canvas.grid(row=0, column=0, columnspan=2)
-
-    # def open_score_window(self, right_answers, wrong_answers, weight):
-    #     for widget in self.window.winfo_children():
-    #         widget.destroy()
-
-    #     score_label = Label(
-    #         text=f"You got {right_answers} right out of {wrong_answers}!",
-    #         fg=MAIN_COLOR,
-    #         bg=COLOR_3,
-    #         font=('Arial', 14, 'bold')
-    #     )
-    #     score_label.place(x=280, y=120)
-
-    #     return_home_button = Button(
-    #         text='Return to home page',
-    #         width=32,
-    #         font=('Arial', 10),
-    #         command=self.open_starting_window
-    #     )
-    #     return_home_button.place(x=250, y=190)
-
-    #     close_program_button = Button(
-    #         text='Close program',
-    #         width=32,
-    #         font=('Arial', 10),
-    #         command=self.close_program
-    #     )
-    #     close_program_button.place(x=250, y=240)
-
-    #     if not weight:
-    #         date = datetime.today().date()
-    #         hour = datetime.today().hour
-    #         minutes = datetime.today().minute
-    #         with open('data/user_score.txt', 'a') as file:
-    #             file.write(f'On {date} at {hour}:{minutes} you scored {right_answers} out of {wrong_answers}.\n')
-
-    # def update_buttons(self, delete=None, add_questions_window=None):
-    #     if delete:
-    #         self.quiz_features.delete_database()
-    #     if not add_questions_window:
-    #         existing_file_buttons = [self.view_statistics_button, self.edit_button, self.delete_database_button]
-    #     else:
-    #         existing_file_buttons = []
-    #     try:
-    #         pandas.read_csv('data/user_database.csv')
-    #         for button in existing_file_buttons:
-    #             button.config(state='normal')
-    #         if self.quiz_features.get_questions_available() >= 5:
-    #             self.enter_practice_button.config(state='normal')
-    #             self.enter_test_button.config(state='normal')
-    #         else:
-    #             self.enter_practice_button.config(state='disabled')
-    #             self.enter_test_button.config(state='disabled')
-    #     except FileNotFoundError:
-    #         for button in existing_file_buttons:
-    #             button.config(state='disabled')
-    #         self.enter_practice_button.config(state='disabled')
-    #         self.enter_test_button.config(state='disabled')
-
-    # def send_answer(self, answer, correct_answer, index, weight=None):
-    #     self.questions_obj.check_answer(answer, correct_answer, index, weight)
-    #     self.fetch_next_question(weight)
-
-    # def add_question(self, q_type, text, answer, incorrect_answer1=None,
-    #                  incorrect_answer2=None, incorrect_answer3=None, test=None):
-    #     if self.quiz_features.check_entry_data(q_type, text, answer, incorrect_answer1, incorrect_answer2,
-    #                                            incorrect_answer3):
-    #         table = {
-    #             'Question': [str(text)],
-    #             'Answer': [str(answer)],
-    #             'Incorrect answer 1': [str(incorrect_answer1)],
-    #             'Incorrect answer 2': [str(incorrect_answer2)],
-    #             'Incorrect answer 3': [str(incorrect_answer3)],
-    #             'Question type': [q_type],
-    #         }
-    #         print(tabulate(table, headers='keys', tablefmt='psql', showindex=False))
-
-    #         confirmation = messagebox.askyesno(
-    #             'Confirm question addition?',
-    #             f'Do you really want to add to the database the\n question printed to the console?')
-    #         if confirmation:
-    #             question_to_add = {
-    #                 'question': [str(text)],
-    #                 'answer': [str(answer)],
-    #                 'incorrect_answer1': [str(incorrect_answer1)],
-    #                 'incorrect_answer2': [str(incorrect_answer2)],
-    #                 'incorrect_answer3': [str(incorrect_answer3)],
-    #                 'answered_right': [0],
-    #                 'answered_wrong': [0],
-    #                 'answered_right_percentage': ['N/A'],
-    #                 'times_shown': [0],
-    #                 'question_type': [q_type],
-    #                 'is_active': ['Yes'],
-    #                 'question_weight': [10],
-    #             }
-    #             question_to_add_df = pandas.DataFrame(question_to_add)
-    #             try:
-    #                 pandas.read_csv('data/user_database.csv')
-    #                 question_to_add_df.to_csv('data/user_database.csv', mode='a', index=False, header=False, float_format='%.0f')
-    #             except FileNotFoundError:
-    #                 question_to_add_df.to_csv('data/user_database.csv', mode='a', index=False, float_format='%.0f')
-    #             finally:
-    #                 print('Question added successfully.\n')
-    #         else:
-    #             print('Operation canceled.')
-
-    #         if not test:
-    #             self.update_buttons(add_questions_window=True)
-
-    # @staticmethod
-    # def close_program():
-    #     sys.exit('Program successfully closed.')
-
+    def quit_game(self):
+        sys.exit()
 window = UserInterface()
 window.open_starting_window()

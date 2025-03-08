@@ -24,7 +24,7 @@ def download_youtube_audio(output_folder="./songs"):
     existing_song_titles = df['title'].values.tolist()
     for song_title in existing_song_titles:
         if song_title not in downloaded_songs:
-            artist = df[df['title'] == song_title]['artist'].values[0]
+            artist = df[df['title'] == song_title]['artists'].values[0].split(" | ")[0]
 
             ydl_opts = {
                 "format": "bestaudio/best",
@@ -47,7 +47,7 @@ def download_youtube_audio(output_folder="./songs"):
                     print("No results found.")
 
 
-def retrieve_spotify_data(genre, start_year, limit=30):
+def retrieve_spotify_data(genre, start_year, limit=10):
     query = f"genre:{genre} year:{start_year}-{min(start_year + 9, 2025)}"
     try:
         results = sp.search(q=query, type="track", limit=limit, market="US")
@@ -62,7 +62,6 @@ def update_database(results, genre, year):
     try:
         df = pandas.read_csv('data/songs_database.csv')
         filtered_df = df[df['genre'] == genre]['title'].values.tolist()
-        print(filtered_df)
 
     except FileNotFoundError:
         pass
@@ -74,6 +73,7 @@ def update_database(results, genre, year):
         'genre': [],
         'popularity': [],
         'year': [],
+        'album_cover': [],
         }
      
     for track in results:
@@ -99,6 +99,7 @@ def update_database(results, genre, year):
             songs['genre'].append(genre)
             songs['popularity'].append(track['popularity'])
             songs['year'].append(year)
+            songs['album_cover'].append(track['album']['images'][1]["url"])
 
     songs_df = pandas.DataFrame(songs)
     try:
