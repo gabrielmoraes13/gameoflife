@@ -28,9 +28,6 @@ class UserInterface:
 
 
     def open_starting_window(self):
-        for widget in self.window.winfo_children():
-            widget.destroy()
-
         game_start_lb = Label(
             text="Choose the options for your guessing game.",
             fg=SECONDARY_COLOR,
@@ -47,7 +44,6 @@ class UserInterface:
         )
         easy_lb.place(x=110, y=80)
 
-        
         normal_lb = Label(
             text="Normal: You select the genre and the decade, and you won't get any hints.",
             fg='black',
@@ -120,7 +116,6 @@ class UserInterface:
                 int(year_cb.get()),
             )
         )
-
         add_songs_btn.place(x=300, y=500)
 
         self.window.mainloop()
@@ -276,8 +271,6 @@ class UserInterface:
         self.bg_lb.place(x=260, y=60)
 
         song_text = f"The song was: {self.songs_to_play[self.songs_played]} {emojis[0]}"
-        artist_text = f"The artist was: {' & '.join(self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['artists'].values[0].split(" | "))} {emojis[1]}"
-        album_text = f"The album was: {self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['album'].values[0]} {emojis[2]}"
         song_answer = Label(
         text=song_text,
         fg=SECONDARY_COLOR,
@@ -285,7 +278,8 @@ class UserInterface:
         font=SECONDARY_FONT
         )
         song_answer.place(x=260, y=390)
-        
+
+        artist_text = f"The artist was: {' & '.join(self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['artists'].values[0].split(" | "))} {emojis[1]}"
         artist_answer = Label(
         text=artist_text,
         fg=SECONDARY_COLOR,
@@ -293,7 +287,8 @@ class UserInterface:
         font=SECONDARY_FONT
         )
         artist_answer.place(x=260, y=420)
-        
+
+        album_text = f"The album was: {self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['album'].values[0]} {emojis[2]}"
         album_answer = Label(
         text=album_text,
         fg=SECONDARY_COLOR,
@@ -303,14 +298,12 @@ class UserInterface:
         album_answer.place(x=260, y=450)
         
         self.songs_played += 1
-
         if self.songs_played < len(self.songs_to_play):
             next_song_btn = Button(
                 text="Skip results",
                 width=25,
                 command=self.open_guess_window,
-            )
-            
+            )    
         else:
             next_song_btn = Button(
                 text="You reached the end. Quit game",
@@ -318,6 +311,7 @@ class UserInterface:
                 command=self.quit_game,
             )
         next_song_btn.place(x=300, y=500)
+
         score_lb = Label(
         text=f"Current score: {self.score}/{self.songs_played*3}",
         fg=SECONDARY_COLOR,
@@ -325,7 +319,6 @@ class UserInterface:
         font=SECONDARY_FONT
         )
         score_lb.place(x=50, y=180)
-        
         self.window.mainloop()
 
 
@@ -342,7 +335,6 @@ class UserInterface:
         if str(g_album).lower().strip() ==  self.df[self.df['title'] == self.songs_to_play[self.songs_played]]['album'].values[0].lower():
             self.score += 1
             album_right = True
-
         self.open_answer_window(answers=(song_right, artist_right, album_right))
         
 
